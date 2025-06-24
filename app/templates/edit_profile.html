@@ -1,0 +1,36 @@
+{%extends 'base.html'%}
+{%block title%}Edit Profile{%endblock%}
+{%block content%}
+        <h3 class="text-left">Edit Profile</h3>
+        <form action="/profile" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" value="{{username}}" readonly class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" value="{{user_profile['email']}}" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="password">Password (Hashed):</label>
+                <small class="form-text text-muted mb-2">
+                    <i>Note: To update, enter your password in plain text. The service will hash your input and store the hashed value.</i>
+                </small>
+                <input type="password" id="password" name="password" 
+                    value="{{user_profile['password'] | replace(user_profile['password'], '*' * user_profile['password']|length)}}" 
+                    required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="firstname">First Name:</label>
+                <input type="text" id="firstname" name="firstname" value="{{user_profile['firstname']}}" required class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last Name:</label>
+                <input type="text" id="lastname" name="lastname" value="{{user_profile['lastname']}}" required class="form-control">
+            </div>
+            <div class="form-group text-center">
+                <button type="submit" class="btn btn-primary">Save Changes</button>
+            </div>
+        </form>
+   {%endblock%}

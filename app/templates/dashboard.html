@@ -1,0 +1,35 @@
+{%extends "base.html"%}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+
+    <h3>Your Accounts:</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Account Type</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account in accounts %}
+                <tr>
+                    <td>{{ account[0] }}</td>
+                    <td>${{ account[1] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Action buttons -->
+    <div class="row">
+        <div class="col-md-3">
+            <a href="{{ url_for('transfer_form') }}" class="btn btn-primary btn-block">Transfer</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('pay_form') }}" class="btn btn-success btn-block">Pay Someone</a>
+        </div>
+        <div class="col-md-3">
+            <a href="{{ url_for('statement') }}" class="btn btn-info btn-block">Statements</a>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% block title %}Pay Someone{% endblock %}
+{% block content %}
+<h3 class="text-left">Pay Someone</h3>
+<form id="paymentForm" method="POST" action="{{ url_for('pay') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    
+    <div class="form-group">
+        <label for="from_account">From Account</label>
+        <select class="form-control" id="from_account" name="from_account" required>
+            {% for account in accounts %}
+                <option value="{{ account[0] }}">{{ account[1] }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="recipient_email">Recipient Email</label>
+        <div class="d-flex align-items-center">
+            <input type="email" class="form-control mr-2 flex-grow-1" 
+                   id="recipient_email" 
+                   placeholder="Enter recipient's email address" 
+                   name="recipient_email" required>
+            <button type="button" id="findUserBtn" class="btn btn-primary">Find</button>
+        </div>
+        <small id="recipientInfo" class="form-text mt-1"></small>
+    </div>
+
+    <div class="form-group">
+        <label for="recipient_name">Recipient Name</label>
+        <input type="text" class="form-control bg-light" id="recipient_name" readonly>
+    </div>
+
+    <div class="form-group">
+        <label for="reference">Reference</label>
+        <input type="text" class="form-control" 
+               id="reference" name="reference" 
+               placeholder="Enter payment reference" required>
+    </div>
+
+    <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" class="form-control" 
+               id="amount" name="amount"
+               step="0.01" min="0.01" 
+               placeholder="Enter payment amount" required>
+    </div>
+
+    <button type="submit" id="submitBtn" class="btn btn-success btn-block" disabled>Pay</button>
+</form>
+
+<script>
+document.getElementById('findUserBtn').addEventListener('click', function() {
+    const email = document.getElementById('recipient_email').value;
+    const recipientInfo = document.getElementById('recipientInfo');
+    const recipientName = document.getElementById('recipient_name');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (!email) {
+        recipientInfo.className = 'form-text text-danger';
+        recipientInfo.textContent = 'Please enter an email address';
+        recipientName.value = '';
+        submitBtn.disabled = true;
+        return;
+    }
+
+    recipientInfo.className = 'form-text text-info';
+    recipientInfo.textContent = 'Searching...';
+    recipientName.value = '';
+    submitBtn.disabled = true;
+    this.disabled = true;
+    this.textContent = 'Searching...';
+
+    fetch(`/api/search_users?search_query=${encodeURIComponent(email)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.data) {
+                recipientInfo.className = 'form-text text-success';
+                recipientInfo.textContent = 'Recipient found';
+                recipientName.value = data.data.fullname;
+                submitBtn.disabled = false;
+            } else {
+                recipientInfo.className = 'form-text text-danger';
+                recipientInfo.textContent = data.message || 'Recipient not found';
+                recipientName.value = '';
+                submitBtn.disabled = true;
+            }
+        })
+        .catch(error => {
+            recipientInfo.className = 'form-text text-danger';
+            recipientInfo.textContent = 'Error searching for recipient';
+            recipientName.value = '';
+            submitBtn.disabled = true;
+        })
+        .finally(() => {
+            this.disabled = false;
+            this.textContent = 'Find';
+        });
+});
+
+document.getElementById('recipient_email').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        e.preventDefault();
+        document.getElementById('findUserBtn').click();
+    }
+});
+
+document.getElementById('recipient_email').addEventListener('input', function() {
+    const recipientInfo = document.getElementById('recipientInfo');
+    const recipientName = document.getElementById('recipient_name');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    recipientInfo.textContent = '';
+    recipientName.value = '';
+    submitBtn.disabled = true;
+});
+</script>
+{% endblock %}

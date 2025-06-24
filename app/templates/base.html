@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Add CSS styles here -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar {
+            justify-content: flex-end;
+        }
+        @media (max-width: 768px) {
+            h2 {
+                font-size: 1.5rem; /* Smaller text on smaller screens */
+            }
+        }
+    </style>
+    
+</head>
+
+<body>
+    <!-- Navbar with Logout button -->
+   
+    <div class="container mt-3">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <a class="navbar-brand" href="/">ACME Bank</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                <div class="navbar-nav ml-auto">
+                    <a class="nav-item nav-link" href="/">Home</a>
+                    <a class="nav-item nav-link" href="/profile">Profile</a>
+                    <a href="/logout" class="btn btn-danger ml-auto">Logout</a>
+                </div>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-12 col-md-12">
+            <header>
+                <!-- Logo -->
+                <div class="text-center mb-4">
+                    <img src="/static/acme_bank_logo.png" alt="Acme Bank Logo" class="img-fluid">
+                </div>
+            
+            </header>
+            <main>
+        
+                <h2 class="text-center">Welcome, {{ username }}!</h2>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+
+            </main>
+        </div>
+        </div>
+        <footer>
+        </footer>
+
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+    <!-- CSRF Validation Script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add form submission validation
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const csrfToken = this.querySelector('input[name="csrf_token"]');
+                if (!csrfToken || !csrfToken.value) {
+                    e.preventDefault();
+                    alert('Security validation failed. Please refresh the page.');
+                    window.location.reload();
+                }
+            });
+        });
+    });
+    </script>
+
+    {%block scripts%}{%endblock%}
+
+</body>
+
+</html>

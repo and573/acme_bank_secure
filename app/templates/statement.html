@@ -1,0 +1,42 @@
+{%extends "base.html"%}
+{% block title %}Statement{% endblock %}
+{% block content %}
+
+    <h3>Statement</h3>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Type</th>
+                <th>From</th>
+                <th>To</th>
+                <th>Reference</th>
+                <th>Amount</th>
+                
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for t in transactions %}
+                <tr>
+                    <td>{{ t[2]|formatdatetime|safe  }}</td>
+                    <td>{{ t[3] | safe}}</td>
+                    <td>{{ t[4] | safe}}</td>
+                    <td>{{ t[5] | safe}}</td>
+                    <td>{{ t[7] | safe}}</td>
+                    <td>{{ t[6] | safe}}</td>
+
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+
+    <div class="row">
+       
+        <div class="col-md-3">
+            <a href="{{ url_for('get_asset', asset_name='user_' + userid|string + '_bank_statement.csv') }}" class="btn btn-info btn-block">Download</a>
+        </div>
+
+    </div>
+{% endblock %}
